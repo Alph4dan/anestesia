@@ -14,296 +14,366 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  ESTILOS: BOSQUE PROFUNDO — ELEGANTE & ORGÁNICO
+#  ESTILOS — BOSQUE REFINADO
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap');
 
-/* ── Paleta de bosque profundo ──────────────── */
 :root {
-    --bg-base:       #0e1a10;
-    --bg-surface:    #142016;
-    --bg-card:       #1b2e1e;
-    --bg-input:      #162419;
-    --border-subtle: #2e4a32;
-    --border-glow:   #4a7c52;
-    --accent-sage:   #7aab82;
-    --accent-light:  #a8d4b0;
-    --accent-gold:   #c9a96e;
-    --text-primary:  #ddeedd;
-    --text-muted:    #7a9e7e;
-    --text-label:    #9dc4a2;
-    --shadow-deep:   0 24px 60px rgba(0,0,0,0.6);
+    /* Verdes de bosque por capas */
+    --forest-0:   #080f09;   /* suelo */
+    --forest-1:   #0d1a0f;   /* base */
+    --forest-2:   #111f13;   /* fondo */
+    --forest-3:   #172918;   /* tarjeta */
+    --forest-4:   #1d3320;   /* input */
+    --forest-5:   #243d27;   /* hover */
+
+    /* Bordes */
+    --border-1:   rgba(90,140,95,0.18);
+    --border-2:   rgba(90,140,95,0.40);
+    --border-3:   rgba(110,170,115,0.65);
+
+    /* Acentos */
+    --sage:       #8bbf92;
+    --sage-light: #b3d4b8;
+    --sage-dim:   #5a8c5f;
+    --amber:      #c8a870;   /* único acento cálido */
+    --amber-dim:  #9a7a4a;
+
+    /* Texto */
+    --tx-hi:   #cee8d2;
+    --tx-mid:  #8caf92;
+    --tx-lo:   #527558;
 }
 
-/* ── Reset base ─────────────────────────────── */
+/* ── Base ─────────────────────────────────── */
 html, body, .stApp {
-    background-color: var(--bg-base) !important;
-    color: var(--text-primary) !important;
-    font-family: 'DM Sans', sans-serif !important;
+    background-color: var(--forest-1) !important;
+    color: var(--tx-hi) !important;
+    font-family: 'Jost', sans-serif !important;
 }
 
-/* ── Patrón de textura de bosque (puntos sutiles) */
-.stApp::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(circle, rgba(74,124,82,0.08) 1px, transparent 1px);
-    background-size: 28px 28px;
-    pointer-events: none;
-    z-index: 0;
+/* ── Malla de fondo — niebla de bosque ──── */
+.stApp {
+    background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(40,90,45,0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(20,60,25,0.18) 0%, transparent 60%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 39px,
+            rgba(50,100,55,0.04) 40px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 39px,
+            rgba(50,100,55,0.04) 40px
+        ) !important;
 }
 
-/* ── Bloque principal ───────────────────────── */
+/* ── Layout central ─────────────────────── */
 .block-container {
-    max-width: 700px !important;
-    padding-top: 3rem !important;
-    padding-bottom: 4rem !important;
-    position: relative;
-    z-index: 1;
+    max-width: 660px !important;
+    padding: 3.5rem 1.5rem 5rem !important;
 }
 
-/* ── Cabecera ornamental ────────────────────── */
-.header-wrap {
+/* ── Cabecera ───────────────────────────── */
+.hd {
     text-align: center;
-    margin-bottom: 2.8rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 2.4rem;
+    margin-bottom: 2.6rem;
     position: relative;
 }
-.header-wrap::after {
-    content: '✦';
-    display: block;
-    color: var(--accent-gold);
-    font-size: 1rem;
-    margin-top: 1rem;
-    opacity: 0.7;
+.hd::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-2), transparent);
 }
-.app-title {
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 3rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.04em;
-    color: var(--accent-light) !important;
-    -webkit-text-fill-color: var(--accent-light) !important;
-    line-height: 1.1 !important;
+.hd-badge {
+    display: inline-block;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--amber);
+    -webkit-text-fill-color: var(--amber);
+    border: 1px solid rgba(200,168,112,0.3);
+    border-radius: 30px;
+    padding: 0.28rem 0.9rem;
+    margin-bottom: 1.1rem;
+    background: rgba(200,168,112,0.05);
+}
+.hd-title {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 3.2rem !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em !important;
+    color: var(--sage-light) !important;
+    -webkit-text-fill-color: var(--sage-light) !important;
+    line-height: 1 !important;
+    margin: 0 0 0.5rem 0 !important;
+}
+.hd-title em {
+    font-style: italic;
+    color: var(--sage);
+    -webkit-text-fill-color: var(--sage);
+}
+.hd-sub {
+    font-size: 0.72rem !important;
+    letter-spacing: 0.26em !important;
+    text-transform: uppercase !important;
+    color: var(--tx-lo) !important;
+    -webkit-text-fill-color: var(--tx-lo) !important;
     margin: 0 !important;
-}
-.app-subtitle {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.78rem !important;
-    letter-spacing: 0.28em !important;
-    text-transform: uppercase !important;
-    color: var(--accent-gold) !important;
-    -webkit-text-fill-color: var(--accent-gold) !important;
-    margin-top: 0.4rem !important;
-    font-weight: 500 !important;
-}
-.app-icon {
-    font-size: 2.8rem;
-    display: block;
-    margin-bottom: 0.5rem;
-    filter: drop-shadow(0 0 18px rgba(122,171,130,0.5));
+    font-weight: 400 !important;
 }
 
-/* ── Formulario ─────────────────────────────── */
+/* ── Tarjeta del formulario ─────────────── */
 div[data-testid="stForm"] {
-    background: linear-gradient(160deg, var(--bg-card) 0%, #192b1c 100%) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-top: 1px solid #3a5e40 !important;
-    border-radius: 18px !important;
-    padding: 2.8rem 2.4rem !important;
-    box-shadow: var(--shadow-deep), inset 0 1px 0 rgba(168,212,176,0.06) !important;
+    background:
+        linear-gradient(175deg,
+            rgba(36,61,39,0.6) 0%,
+            rgba(17,31,19,0.95) 55%,
+            rgba(11,20,12,0.98) 100%
+        ) !important;
+    border: 1px solid var(--border-1) !important;
+    border-top-color: var(--border-2) !important;
+    border-radius: 20px !important;
+    padding: 2.6rem 2.6rem 2.2rem !important;
+    box-shadow:
+        0 2px 0 0 rgba(110,170,115,0.12),
+        0 30px 80px -10px rgba(0,0,0,0.7),
+        0 8px 32px -4px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(180,230,185,0.05) !important;
+    position: relative;
+    overflow: hidden;
+}
+/* Reflejo de luz en la esquina superior */
+div[data-testid="stForm"]::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(90,160,95,0.07) 0%, transparent 70%);
+    pointer-events: none;
 }
 
-/* ── Sección divisora dentro del form ──────── */
-.section-label {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.68rem !important;
-    letter-spacing: 0.32em !important;
-    text-transform: uppercase !important;
-    color: var(--accent-gold) !important;
-    -webkit-text-fill-color: var(--accent-gold) !important;
-    font-weight: 500 !important;
-    margin: 1.8rem 0 0.8rem 0 !important;
-    padding-bottom: 0.5rem !important;
-    border-bottom: 1px solid var(--border-subtle) !important;
-    display: block !important;
+/* ── Separadores de sección ─────────────── */
+.sec {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.7rem !important;
+    margin: 2rem 0 1.1rem !important;
 }
-
-/* ── Títulos generales ──────────────────────── */
-h1, h2, h3 {
-    font-family: 'Cormorant Garamond', serif !important;
-    color: var(--accent-light) !important;
-    -webkit-text-fill-color: var(--accent-light) !important;
+.sec-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+.sec-label {
+    font-family: 'Jost', sans-serif !important;
+    font-size: 0.62rem !important;
     font-weight: 600 !important;
+    letter-spacing: 0.34em !important;
+    text-transform: uppercase !important;
+    color: var(--amber-dim) !important;
+    -webkit-text-fill-color: var(--amber-dim) !important;
+    white-space: nowrap !important;
+}
+.sec-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-1), transparent);
 }
 
-/* ── Labels ─────────────────────────────────── */
-label, .stTextInput label, .stSelectbox label,
-.stTextArea label, .stDateInput label, .stMultiSelect label {
-    color: var(--text-label) !important;
-    -webkit-text-fill-color: var(--text-label) !important;
-    font-size: 0.82rem !important;
+/* ── Títulos generales ──────────────────── */
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif !important;
+    color: var(--sage-light) !important;
+    -webkit-text-fill-color: var(--sage-light) !important;
+}
+
+/* ── Labels ─────────────────────────────── */
+label {
+    color: var(--tx-mid) !important;
+    -webkit-text-fill-color: var(--tx-mid) !important;
+    font-size: 0.75rem !important;
     font-weight: 500 !important;
-    letter-spacing: 0.04em !important;
-    font-family: 'DM Sans', sans-serif !important;
+    letter-spacing: 0.06em !important;
+    font-family: 'Jost', sans-serif !important;
+    text-transform: uppercase !important;
 }
 
-/* ── Inputs, textareas, fecha ───────────────── */
+/* ── Inputs & textarea ──────────────────── */
 .stTextInput input,
 .stTextArea textarea,
 .stDateInput input {
-    background-color: var(--bg-input) !important;
-    color: var(--text-primary) !important;
-    -webkit-text-fill-color: var(--text-primary) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: 10px !important;
-    padding: 0.65rem 1rem !important;
-    font-size: 0.95rem !important;
-    font-family: 'DM Sans', sans-serif !important;
-    transition: all 0.2s ease !important;
+    background-color: var(--forest-4) !important;
+    color: var(--tx-hi) !important;
+    -webkit-text-fill-color: var(--tx-hi) !important;
+    border: 1px solid var(--border-1) !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 0.9rem !important;
+    font-size: 0.92rem !important;
+    font-family: 'Jost', sans-serif !important;
+    font-weight: 300 !important;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease !important;
+    letter-spacing: 0.02em !important;
 }
 .stTextInput input:focus,
 .stTextArea textarea:focus,
 .stDateInput input:focus {
-    border-color: var(--border-glow) !important;
-    box-shadow: 0 0 0 3px rgba(74,124,82,0.2) !important;
-    background-color: #1d3020 !important;
+    border-color: var(--border-3) !important;
+    background-color: var(--forest-5) !important;
+    box-shadow: 0 0 0 3px rgba(90,140,95,0.15) !important;
     outline: none !important;
 }
 .stTextInput input::placeholder,
 .stTextArea textarea::placeholder {
-    color: var(--text-muted) !important;
-    -webkit-text-fill-color: var(--text-muted) !important;
+    color: var(--tx-lo) !important;
+    -webkit-text-fill-color: var(--tx-lo) !important;
+    font-style: italic !important;
+    font-weight: 300 !important;
 }
 
-/* ── Selectbox ──────────────────────────────── */
+/* ── Selectbox ──────────────────────────── */
 div[data-baseweb="select"] > div {
-    background-color: var(--bg-input) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: 10px !important;
+    background-color: var(--forest-4) !important;
+    border: 1px solid var(--border-1) !important;
+    border-radius: 8px !important;
+    transition: border-color 0.18s ease !important;
+}
+div[data-baseweb="select"] > div:focus-within {
+    border-color: var(--border-3) !important;
+    box-shadow: 0 0 0 3px rgba(90,140,95,0.15) !important;
 }
 div[data-baseweb="select"] * {
-    color: var(--text-primary) !important;
-    -webkit-text-fill-color: var(--text-primary) !important;
-    font-family: 'DM Sans', sans-serif !important;
+    color: var(--tx-hi) !important;
+    -webkit-text-fill-color: var(--tx-hi) !important;
+    font-family: 'Jost', sans-serif !important;
+    font-weight: 300 !important;
 }
-div[data-baseweb="select"] svg { fill: var(--accent-sage) !important; }
+div[data-baseweb="select"] svg { fill: var(--sage-dim) !important; }
 
-/* ── Dropdown de opciones ───────────────────── */
+/* ── Dropdown lista ─────────────────────── */
 ul[data-baseweb="menu"] {
-    background-color: #1d3020 !important;
-    border: 1px solid var(--border-glow) !important;
+    background-color: #1a2e1c !important;
+    border: 1px solid var(--border-2) !important;
     border-radius: 10px !important;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.5) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6) !important;
+    padding: 0.3rem !important;
 }
 ul[data-baseweb="menu"] li {
-    border-radius: 6px !important;
+    border-radius: 5px !important;
+    margin: 1px 0 !important;
 }
 ul[data-baseweb="menu"] li:hover {
-    background-color: rgba(74,124,82,0.25) !important;
+    background-color: rgba(90,140,95,0.2) !important;
 }
 ul[data-baseweb="menu"] * {
-    color: var(--text-primary) !important;
-    -webkit-text-fill-color: var(--text-primary) !important;
-    font-family: 'DM Sans', sans-serif !important;
+    color: var(--tx-hi) !important;
+    -webkit-text-fill-color: var(--tx-hi) !important;
+    font-family: 'Jost', sans-serif !important;
+    font-weight: 300 !important;
 }
 
-/* ── Multiselect chips ──────────────────────── */
+/* ── Multiselect chips ──────────────────── */
 span[data-baseweb="tag"] {
-    background-color: #2e5233 !important;
-    border: 1px solid var(--border-glow) !important;
-    border-radius: 6px !important;
+    background: rgba(50,90,55,0.7) !important;
+    border: 1px solid var(--border-2) !important;
+    border-radius: 5px !important;
+    backdrop-filter: blur(4px) !important;
 }
 span[data-baseweb="tag"] * {
-    color: var(--accent-light) !important;
-    -webkit-text-fill-color: var(--accent-light) !important;
+    color: var(--sage-light) !important;
+    -webkit-text-fill-color: var(--sage-light) !important;
     font-weight: 500 !important;
+    font-size: 0.78rem !important;
 }
 
-/* ── Botón principal ────────────────────────── */
-div[data-testid="stForm"] button[kind="primaryFormSubmit"],
-div[data-testid="stForm"] button[kind="primary"],
+/* ── Botón principal ────────────────────── */
 div[data-testid="stForm"] button {
-    background: linear-gradient(135deg, #2e5a35 0%, #1e3d24 100%) !important;
-    color: var(--accent-light) !important;
-    -webkit-text-fill-color: var(--accent-light) !important;
-    font-family: 'DM Sans', sans-serif !important;
+    background: linear-gradient(160deg, #1f3d24 0%, #142918 100%) !important;
+    color: var(--sage-light) !important;
+    -webkit-text-fill-color: var(--sage-light) !important;
+    font-family: 'Jost', sans-serif !important;
     font-weight: 600 !important;
-    font-size: 0.92rem !important;
-    letter-spacing: 0.14em !important;
+    font-size: 0.76rem !important;
+    letter-spacing: 0.3em !important;
     text-transform: uppercase !important;
-    border: 1px solid var(--border-glow) !important;
-    border-radius: 10px !important;
-    padding: 0.8rem 2rem !important;
+    border: 1px solid var(--border-2) !important;
+    border-top-color: var(--border-3) !important;
+    border-radius: 9px !important;
+    padding: 0.9rem 2rem !important;
     width: 100% !important;
-    margin-top: 1.6rem !important;
-    transition: all 0.25s ease !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(168,212,176,0.1) !important;
+    margin-top: 1.8rem !important;
+    transition: all 0.22s ease !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(180,230,185,0.07) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+div[data-testid="stForm"] button::after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(160deg, rgba(140,200,145,0.06) 0%, transparent 60%) !important;
+    pointer-events: none !important;
 }
 div[data-testid="stForm"] button:hover {
-    background: linear-gradient(135deg, #3a6e43 0%, #28502e 100%) !important;
-    border-color: var(--accent-sage) !important;
-    box-shadow: 0 6px 28px rgba(74,124,82,0.3), inset 0 1px 0 rgba(168,212,176,0.15) !important;
+    background: linear-gradient(160deg, #284f2e 0%, #1a341f 100%) !important;
+    border-color: var(--border-3) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(110,170,115,0.2), inset 0 1px 0 rgba(180,230,185,0.12) !important;
     transform: translateY(-1px) !important;
+    color: #d0ecd4 !important;
+    -webkit-text-fill-color: #d0ecd4 !important;
 }
 div[data-testid="stForm"] button:active {
-    transform: translateY(0) !important;
+    transform: translateY(0px) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4) !important;
 }
 
-/* ── Expander ───────────────────────────────── */
-.streamlit-expanderHeader {
-    background-color: var(--bg-card) !important;
-    border: 1px solid var(--border-subtle) !important;
-    border-radius: 10px !important;
+/* ── Expander ───────────────────────────── */
+details {
+    background: rgba(23,41,24,0.5) !important;
+    border: 1px solid var(--border-1) !important;
+    border-radius: 9px !important;
 }
-.streamlit-expanderHeader * {
-    color: var(--text-label) !important;
-    -webkit-text-fill-color: var(--text-label) !important;
-    font-family: 'DM Sans', sans-serif !important;
-}
-
-/* ── Mensajes de alerta ─────────────────────── */
-.stSuccess {
-    background-color: #1b3a1e !important;
-    border: 1px solid var(--border-glow) !important;
-    border-radius: 10px !important;
-    color: var(--accent-light) !important;
-}
-.stError {
-    background-color: #2a1a1a !important;
-    border: 1px solid #6b3535 !important;
-    border-radius: 10px !important;
+summary {
+    color: var(--tx-mid) !important;
+    -webkit-text-fill-color: var(--tx-mid) !important;
+    font-size: 0.8rem !important;
+    font-family: 'Jost', sans-serif !important;
+    padding: 0.7rem 1rem !important;
 }
 
-/* ── Divisor ────────────────────────────────── */
-hr {
-    border-color: var(--border-subtle) !important;
-    margin: 2rem 0 !important;
+/* ── Alertas ────────────────────────────── */
+div[data-testid="stAlert"] {
+    border-radius: 9px !important;
 }
 
-/* ── Columnas ───────────────────────────────── */
-[data-testid="column"] { gap: 1rem !important; }
+/* ── Scrollbar ──────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--forest-1); }
+::-webkit-scrollbar-thumb { background: var(--forest-5); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--sage-dim); }
 
-/* ── Scrollbar ──────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb {
-    background: var(--border-subtle);
-    border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover { background: var(--border-glow); }
-
-/* ── Pie ornamental ─────────────────────────── */
-.footer-ornament {
+/* ── Pie ─────────────────────────────────── */
+.footer {
     text-align: center;
-    margin-top: 3rem;
-    color: var(--text-muted) !important;
-    font-size: 0.72rem !important;
-    letter-spacing: 0.2em !important;
+    margin-top: 3.5rem;
+    font-size: 0.62rem !important;
+    letter-spacing: 0.28em !important;
     text-transform: uppercase !important;
+    color: var(--tx-lo) !important;
+    -webkit-text-fill-color: var(--tx-lo) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -338,10 +408,10 @@ def conectar_google_sheets():
 #  CABECERA
 # ─────────────────────────────────────────────
 st.markdown("""
-<div class="header-wrap">
-    <span class="app-icon">🌲</span>
-    <h1 class="app-title">AnesthesiaLog</h1>
-    <p class="app-subtitle">Registro clínico · Anestesiología</p>
+<div class="hd">
+    <div class="hd-badge">Registro · Anestesiología</div>
+    <h1 class="hd-title">Anesthesia<em>Log</em></h1>
+    <p class="hd-sub">Sistema de documentación clínica</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -352,7 +422,13 @@ st.markdown("""
 with st.form("registro_anestesia", clear_on_submit=True):
 
     # ── Datos del paciente ───────────────────
-    st.markdown('<span class="section-label">Datos del paciente</span>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="sec">
+        <span class="sec-dot"></span>
+        <span class="sec-label">Datos del paciente</span>
+        <span class="sec-line"></span>
+    </div>
+    """, unsafe_allow_html=True)
 
     col1, col2 = st.columns([2, 1])
     with col1:
@@ -367,7 +443,13 @@ with st.form("registro_anestesia", clear_on_submit=True):
         peso = st.text_input("Peso (kg)", placeholder="kg")
 
     # ── Procedimiento ────────────────────────
-    st.markdown('<span class="section-label">Procedimiento</span>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="sec">
+        <span class="sec-dot"></span>
+        <span class="sec-label">Procedimiento</span>
+        <span class="sec-line"></span>
+    </div>
+    """, unsafe_allow_html=True)
 
     tipo_cirugia = st.selectbox(
         "Tipo de cirugía",
@@ -386,7 +468,13 @@ with st.form("registro_anestesia", clear_on_submit=True):
         asa = st.selectbox("Clasificación ASA", ["— —", "ASA I", "ASA II", "ASA III", "ASA IV", "ASA V"])
 
     # ── Fármacos ─────────────────────────────
-    st.markdown('<span class="section-label">Fármacos administrados</span>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="sec">
+        <span class="sec-dot"></span>
+        <span class="sec-label">Fármacos administrados</span>
+        <span class="sec-line"></span>
+    </div>
+    """, unsafe_allow_html=True)
 
     farmacos = st.multiselect(
         "Seleccionar fármacos",
@@ -401,8 +489,14 @@ with st.form("registro_anestesia", clear_on_submit=True):
         height=90
     )
 
-    # ── Incidencias y notas ──────────────────
-    st.markdown('<span class="section-label">Evolución intraoperatoria</span>', unsafe_allow_html=True)
+    # ── Evolución intraoperatoria ────────────
+    st.markdown("""
+    <div class="sec">
+        <span class="sec-dot"></span>
+        <span class="sec-label">Evolución intraoperatoria</span>
+        <span class="sec-line"></span>
+    </div>
+    """, unsafe_allow_html=True)
 
     col7, col8 = st.columns(2)
     with col7:
@@ -417,15 +511,15 @@ with st.form("registro_anestesia", clear_on_submit=True):
          "Dificultad de intubación", "Despertar intraoperatorio", "Otra"]
     )
 
-    with st.expander("📋 Notas adicionales y plan postoperatorio"):
+    with st.expander("📋  Notas adicionales y plan postoperatorio"):
         notas_libres = st.text_area(
             "Notas clínicas",
             placeholder="Observaciones, plan de analgesia postoperatoria, indicaciones...",
             height=120
         )
 
-    # ── Botón enviar ──────────────────────────
-    enviado = st.form_submit_button("✦  Registrar caso")
+    # ── Botón enviar ─────────────────────────
+    enviado = st.form_submit_button("Registrar caso")
 
 
 # ─────────────────────────────────────────────
@@ -454,14 +548,10 @@ if enviado:
             hoja.append_row(fila)
             st.success("✦  Caso registrado correctamente.")
         else:
-            # Demo sin conexión
             st.success("✦  Registro guardado (modo demo — sin conexión a Sheets).")
 
+
 # ─────────────────────────────────────────────
-#  PIE DE PÁGINA
+#  PIE
 # ─────────────────────────────────────────────
-st.markdown("""
-<div class="footer-ornament">
-    AnesthesiaLog &nbsp;·&nbsp; Uso clínico interno &nbsp;·&nbsp; 🌲
-</div>
-""", unsafe_allow_html=True)
+st.markdown('<p class="footer">AnesthesiaLog &nbsp;·&nbsp; Uso clínico interno</p>', unsafe_allow_html=True)
