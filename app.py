@@ -51,7 +51,7 @@ with st.form("formulario_cirugia", clear_on_submit=True):
         especialidad = st.selectbox("Especialidad", [
             "Cg. General", "Traumatología", "Ginecología/Obstetricia", 
             "Urología", "Otorrino", "Oftalmología", "Cg. Vascular", 
-            "Neurocirugía", "Pediatría", "Cg. Plástica", "Otros"
+            "Neurocirugía", "Pediatría", "Cg. Plástica", "Cg. Torácica", "Cg. Cardiaca"
         ])
         asa = st.selectbox("Clasificación ASA", ["ASA I", "ASA II", "ASA III", "ASA IV", "ASA V"])
 
