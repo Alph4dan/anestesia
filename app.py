@@ -1,34 +1,41 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-import os
+import gspread
 
 # Configuración de la página
 st.set_page_config(page_title="Registro de Anestesia", page_icon="💉", layout="centered")
 
-# Nombre del archivo donde se guardarán los datos
-DATA_FILE = "registro_anestesias.csv"
-
-# Función para cargar datos existentes
-def cargar_datos():
-    if os.path.exists(DATA_FILE):
-        return pd.read_csv(DATA_FILE)
-    else:
-        return pd.DataFrame(columns=[
-            "Fecha", "Quirófano", "Especialidad", "Procedimiento", 
-            "Tipo Anestesia", "ASA", "Notas/Complicaciones"
-        ])
-
-# Función para guardar un nuevo registro
-def guardar_registro(datos_nuevos):
-    df = cargar_datos()
-    # Usar pd.concat en lugar de append (obsoleto)
-    df = pd.concat([df, pd.DataFrame([datos_nuevos])], ignore_index=True)
-    df.to_csv(DATA_FILE, index=False, encoding="utf-8")
+# Función para conectar directamente con Google Sheets usando los Secrets
+def conectar_google_sheets():
+    try:
+        # Reconstruir las credenciales desde el TOML de Secrets
+        credentials_info = {
+            "type": st.secrets["connections"]["gsheets"]["type"],
+            "project_id": st.secrets["connections"]["gsheets"]["project_id"],
+            "private_key_id": st.secrets["connections"]["gsheets"]["private_key_id"],
+            "private_key": st.secrets["connections"]["gsheets"]["private_key"].replace("\\n", "\n"),
+            "client_email": st.secrets["connections"]["gsheets"]["client_email"],
+            "auth_uri": st.secrets["connections"]["gsheets"]["auth_uri"],
+            "token_uri": st.secrets["connections"]["gsheets"]["token_uri"],
+            "auth_provider_x509_cert_url": st.secrets["connections"]["gsheets"]["auth_provider_x509_cert_url"],
+            "client_x509_cert_url": st.secrets["connections"]["gsheets"]["client_x509_cert_url"]
+        }
+        
+        # Autenticar con Google
+        gc = gspread.service_account_from_dict(credentials_info)
+        
+        # Abrir la hoja por su URL
+        url_hoja = st.secrets["connections"]["gsheets"]["spreadsheet"]
+        sh = gc.open_by_url(url_hoja)
+        return sh.get_worksheet(0)  # Devolvemos la primera pestaña
+    except Exception as e:
+        st.error(f"⚠️ Error crítico de conexión con Google: {e}")
+        return None
 
 # Título de la app
 st.title("💉 Registro Diario de Anestesia")
-st.write("Introduce los datos de la intervención para mantener tu histórico actualizado.")
+st.write("Conexión directa con tu cuenta de Google Sheets.")
 
 st.divider()
 
@@ -56,9 +63,8 @@ with st.form("formulario_cirugia", clear_on_submit=True):
         "Bloqueo Periférico (Plexo)", "Local + Sedación", "Combinada"
     ])
     
-    notas = st.text_area("Notas / Incidencias / Vía Aérea", placeholder="Ej: Vía aérea difícil (Cormack III), requiere videolaringo. Inestabilidad en inducción...")
+    notas = st.text_area("Notas / Incidencias / Vía Aérea", placeholder="Ej: Vía aérea difícil (Cormack III)...")
 
-    # Botón de envío
     boton_guardar = st.form_submit_button("Registrar Intervención")
 
 # Acción al pulsar el botón
@@ -66,35 +72,42 @@ if boton_guardar:
     if not procedimiento:
         st.error("Por favor, introduce al menos el nombre del procedimiento.")
     else:
-        nuevo_registro = {
-            "Fecha": fecha_cirugia.strftime("%Y-%m-%d"),
-            "Quirófano": quirofano,
-            "Especialidad": especialidad,
-            "Procedimiento": procedimiento,
-            "Tipo Anestesia": ", ".join(tipo_anestesia),
-            "ASA": asa,
-            "Notas/Complicaciones": notas
-        }
-        guardar_registro(nuevo_registro)
-        st.success("✅ Cirugía registrada correctamente.")
+        # Intentar conectar
+        hoja = conectar_google_sheets()
+        
+        if hoja is not None:
+            try:
+                # Preparar la fila exactamente en el orden de las columnas de tu Excel
+                nueva_fila = [
+                    fecha_cirugia.strftime("%Y-%m-%d"),
+                    quirofano,
+                    especialidad,
+                    procedimiento,
+                    ", ".join(tipo_anestesia),
+                    asa,
+                    notas
+                ]
+                
+                # Insertar al final de la hoja
+                hoja.append_row(nueva_fila)
+                st.success("✅ ¡Guardado en Google Sheets con éxito!")
+            except Exception as e:
+                st.error(f"Error al escribir en la hoja: {e}")
 
 st.divider()
 
-# --- VISUALIZACIÓN Y DESCARGA DE DATOS ---
-st.subheader("📊 Historial Reciente")
-df_actual = cargar_datos()
+# --- VISUALIZACIÓN EN TIEMPO REAL ---
+st.subheader("📊 Historial Actual en la Nube")
+hoja_vista = conectar_google_sheets()
 
-if not df_actual.empty:
-    # Mostrar las últimas intervenciones primero
-    st.dataframe(df_actual.tail(10), use_container_width=True)
-    
-    # Botón para descargar todo en Excel/CSV
-    csv = df_actual.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="📥 Descargar todo el registro (CSV)",
-        data=csv,
-        file_name=f"registro_anestesia_{datetime.now().strftime('%Y%m%d')}.csv",
-        mime='text/csv',
-    )
-else:
-    st.info("Aún no hay cirugías registradas hoy.")
+if hoja_vista is not None:
+    try:
+        datos = hoja_vista.get_all_records()
+        if datos:
+            df = pd.DataFrame(datos)
+            # Aquí aplicamos la corrección de visualización que pedía el log de Streamlit
+            st.dataframe(df.tail(10), width="stretch")
+        else:
+            st.info("La hoja de cálculo está conectada pero no tiene registros aún.")
+    except Exception as e:
+        st.caption(f"No se pudo cargar la vista previa en pantalla: {e}")
