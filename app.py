@@ -11,10 +11,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- ESTILOS VISUALES AVANZADOS (TONOS VERDES Y CAMPOS MEJORADOS) ---
+# --- ESTILOS VISUALES AVANZADOS (CORRECCIÓN DE DESPLEGABLES) ---
 st.markdown("""
     <style>
-    /* Fondo general oscuro verde (Verde Quirófano Profundo) */
+    /* Fondo general oscuro verde */
     .stApp {
         background-color: #022c22;
         color: #ecfdf5;
@@ -45,18 +45,48 @@ st.markdown("""
         letter-spacing: 0.5px;
     }
 
-    /* === DISEÑO MEJORADO DE LOS CAMPOS DE TEXTO === */
+    /* === DISEÑO BASE DE LOS CAMPOS === */
     .stTextInput input, .stTextArea textarea, div[data-baseweb="select"] > div {
-        background-color: #065f46 !important; /* Fondo verde translúcido */
+        background-color: #065f46 !important;
         color: #ffffff !important;
-        border: 2px solid #059669 !important; /* Borde verde medio */
-        border-radius: 12px !important; /* Bordes redondeados modernos */
-        padding: 0.6rem 1rem !important; /* Más espacio interior para respirar */
-        transition: all 0.3s ease !important; /* Animación suave */
+        border: 2px solid #059669 !important;
+        border-radius: 12px !important;
+        padding: 0.6rem 1rem !important;
+        transition: all 0.3s ease !important;
         font-size: 1rem !important;
     }
     
-    /* Efecto al seleccionar/escribir en un campo (Glow verde claro) */
+    /* === ARREGLO PARA DESPLEGABLES (Selectbox) === */
+    /* Fuerza el color blanco en el texto seleccionado y en la flecha */
+    div[data-baseweb="select"] span, div[data-baseweb="select"] div {
+        color: #ffffff !important;
+    }
+    div[data-baseweb="select"] svg {
+        fill: #ffffff !important;
+    }
+    
+    /* === ARREGLO PARA MULTISELECT (Etiquetas/Chips) === */
+    span[data-baseweb="tag"] {
+        background-color: #10b981 !important; /* Verde brillante para destacar */
+        border-radius: 6px !important;
+        border: 1px solid #34d399 !important;
+    }
+    span[data-baseweb="tag"] span {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+    
+    /* === ARREGLO PARA LA LISTA DE OPCIONES AL ABRIR === */
+    ul[data-baseweb="menu"] {
+        background-color: #065f46 !important;
+        border: 1px solid #047857 !important;
+        border-radius: 8px !important;
+    }
+    ul[data-baseweb="menu"] li {
+        color: #ffffff !important;
+    }
+    
+    /* Efecto Glow al tocar el campo */
     .stTextInput input:focus, .stTextArea textarea:focus, div[data-baseweb="select"] > div:focus-within {
         border-color: #34d399 !important;
         box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25) !important;
@@ -84,7 +114,7 @@ st.markdown("""
         background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
     }
     
-    /* Diseño del desplegable (Expander) */
+    /* Diseño del desplegable (Expander de notas) */
     .streamlit-expanderHeader {
         background-color: #065f46 !important;
         border-radius: 10px !important;
@@ -121,7 +151,7 @@ st.markdown("<p style='color: #34d399; font-weight: 700; text-transform: upperca
 st.title("🌿 AnesthesiaLog")
 st.markdown("<p style='color: #6ee7b7;'>Registro clínico seguro y sincronizado en tiempo real.</p>", unsafe_allow_html=True)
 
-# --- PANEL DE CONTROL DIGITAL (Métricas en tonos verdes) ---
+# --- PANEL DE CONTROL DIGITAL ---
 hoja_datos = conectar_google_sheets()
 total_casos = 0
 
@@ -132,7 +162,7 @@ if hoja_datos is not None:
     except:
         pass
 
-# Dashboard minimalista superior adaptado al verde
+# Dashboard
 m1, m2, m3 = st.columns(3)
 with m1:
     st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #6ee7b7; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Casos Totales</span> <br> <span style='font-size: 1.8rem; font-weight: 800; color: #ecfdf5;'>{total_casos}</span></div>", unsafe_allow_html=True)
@@ -171,7 +201,7 @@ with st.form("formulario_cirugia", clear_on_submit=True):
         "Bloqueo Periférico (Plexo)", "Local + Sedación", "Combinada"
     ])
     
-    # Campo expandible para mantener la limpieza visual
+    # Campo expandible
     with st.expander("➕ Añadir observaciones clínicas o incidencias"):
         notas = st.text_area("Notas / Vía aérea:", placeholder="Ej: Intubación al primer intento. Vía venosa central canalizada sin incidencias...")
     
@@ -210,7 +240,6 @@ if hoja_datos is not None:
         datos = hoja_datos.get_all_records()
         if datos:
             df = pd.DataFrame(datos)
-            # Invertimos el orden para mostrar la última cirugía arriba
             df_invertido = df.iloc[::-1]
             st.dataframe(df_invertido.head(5), width="stretch")
         else:
