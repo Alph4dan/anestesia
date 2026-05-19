@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- ESTILOS VISUALES AVANZADOS (CORRECCIÓN DE DESPLEGABLES) ---
+# --- ESTILOS VISUALES AVANZADOS (CORRECCIÓN TOTAL DE COLORES) ---
 st.markdown("""
     <style>
     /* Fondo general oscuro verde */
@@ -26,7 +26,7 @@ st.markdown("""
         border: 1px solid #047857 !important;
         border-radius: 20px !important;
         padding: 2.5rem !important;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
     }
     
     /* Títulos con gradiente esmeralda */
@@ -38,28 +38,28 @@ st.markdown("""
         font-weight: 800 !important;
     }
     
-    /* Color de las etiquetas (Labels) de los campos */
+    /* Color de las etiquetas (Labels) */
     label, p {
         color: #a7f3d0 !important;
         font-weight: 600 !important;
-        letter-spacing: 0.5px;
     }
 
-    /* === DISEÑO BASE DE LOS CAMPOS === */
-    .stTextInput input, .stTextArea textarea, div[data-baseweb="select"] > div {
+    /* === DISEÑO BASE (Inputs, Textarea y Fecha) === */
+    .stTextInput input, .stTextArea textarea, .stDateInput input, div[data-baseweb="select"] > div {
         background-color: #065f46 !important;
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important; /* Fuerza color blanco en el texto */
         border: 2px solid #059669 !important;
         border-radius: 12px !important;
         padding: 0.6rem 1rem !important;
-        transition: all 0.3s ease !important;
         font-size: 1rem !important;
     }
     
-    /* === ARREGLO PARA DESPLEGABLES (Selectbox) === */
-    /* Fuerza el color blanco en el texto seleccionado y en la flecha */
-    div[data-baseweb="select"] span, div[data-baseweb="select"] div {
+    /* === ARREGLO AGRESIVO PARA DESPLEGABLES (Selectbox) === */
+    /* Fuerza el texto blanco dentro del cuadro de búsqueda del selectbox */
+    div[data-baseweb="select"] * {
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
     }
     div[data-baseweb="select"] svg {
         fill: #ffffff !important;
@@ -67,12 +67,13 @@ st.markdown("""
     
     /* === ARREGLO PARA MULTISELECT (Etiquetas/Chips) === */
     span[data-baseweb="tag"] {
-        background-color: #10b981 !important; /* Verde brillante para destacar */
+        background-color: #10b981 !important;
         border-radius: 6px !important;
         border: 1px solid #34d399 !important;
     }
-    span[data-baseweb="tag"] span {
+    span[data-baseweb="tag"] * {
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
         font-weight: 600 !important;
     }
     
@@ -80,46 +81,45 @@ st.markdown("""
     ul[data-baseweb="menu"] {
         background-color: #065f46 !important;
         border: 1px solid #047857 !important;
-        border-radius: 8px !important;
     }
-    ul[data-baseweb="menu"] li {
+    ul[data-baseweb="menu"] * {
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
     }
     
     /* Efecto Glow al tocar el campo */
-    .stTextInput input:focus, .stTextArea textarea:focus, div[data-baseweb="select"] > div:focus-within {
+    .stTextInput input:focus, .stTextArea textarea:focus, .stDateInput input:focus, div[data-baseweb="select"] > div:focus-within {
         border-color: #34d399 !important;
         box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25) !important;
         background-color: #047857 !important;
     }
 
-    /* === DISEÑO DEL BOTÓN PRINCIPAL === */
-    button[kind="formSubmit"] {
+    /* === ARREGLO PARA EL BOTÓN PRINCIPAL === */
+    div[data-testid="stForm"] button {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
         color: white !important;
+        -webkit-text-fill-color: white !important;
         font-weight: 700 !important;
         font-size: 1.1rem !important;
-        letter-spacing: 1px;
         border: none !important;
         border-radius: 12px !important;
         padding: 0.75rem 2rem !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
-        transition: all 0.3s ease !important;
         width: 100% !important;
         margin-top: 1rem !important;
     }
-    button[kind="formSubmit"]:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 15px rgba(16, 185, 129, 0.4) !important;
+    div[data-testid="stForm"] button:hover {
         background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
     }
     
-    /* Diseño del desplegable (Expander de notas) */
+    /* Diseño del expander de notas */
     .streamlit-expanderHeader {
         background-color: #065f46 !important;
         border-radius: 10px !important;
         border: 1px solid #047857 !important;
+    }
+    .streamlit-expanderHeader * {
         color: #a7f3d0 !important;
+        -webkit-text-fill-color: #a7f3d0 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -147,102 +147,4 @@ def conectar_google_sheets():
         return None
 
 # --- CABECERA DE LA APP ---
-st.markdown("<p style='color: #34d399; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: -0.5rem;'>Quirófano Suite</p>", unsafe_allow_html=True)
-st.title("🌿 AnesthesiaLog")
-st.markdown("<p style='color: #6ee7b7;'>Registro clínico seguro y sincronizado en tiempo real.</p>", unsafe_allow_html=True)
-
-# --- PANEL DE CONTROL DIGITAL ---
-hoja_datos = conectar_google_sheets()
-total_casos = 0
-
-if hoja_datos is not None:
-    try:
-        total_casos = len(hoja_datos.get_all_values()) - 1
-        if total_casos < 0: total_casos = 0
-    except:
-        pass
-
-# Dashboard
-m1, m2, m3 = st.columns(3)
-with m1:
-    st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #6ee7b7; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Casos Totales</span> <br> <span style='font-size: 1.8rem; font-weight: 800; color: #ecfdf5;'>{total_casos}</span></div>", unsafe_allow_html=True)
-with m2:
-    st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #10b981; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Estado</span> <br> <span style='font-size: 1.2rem; font-weight: 800; color: #10b981; line-height: 2.2rem;'>● ONLINE</span></div>", unsafe_allow_html=True)
-with m3:
-    st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #059669; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Conexión</span> <br> <span style='font-size: 1.2rem; font-weight: 800; color: #34d399; line-height: 2.2rem;'>Drive Segura</span></div>", unsafe_allow_html=True)
-
-st.write("")
-st.write("")
-
-# --- FORMULARIO DE ENTRADA ---
-with st.form("formulario_cirugia", clear_on_submit=True):
-    
-    st.markdown("<h3 style='color: #6ee7b7; font-size: 1.3rem; margin-top: 0;'>📝 Datos del Procedimiento</h3>", unsafe_allow_html=True)
-    
-    c1, c2 = st.columns(2)
-    with c1:
-        fecha_cirugia = st.date_input("📅 Fecha de Intervención", datetime.now())
-        quirofano = st.text_input("🏛️ Quirófano / Sala", placeholder="Ej: Q3, Reanimación")
-    with c2:
-        especialidad = st.selectbox("🩺 Especialidad Quirúrgica", [
-            "Cg. General", "Traumatología", "Ginecología/Obstetricia", 
-            "Urología", "Otorrino", "Oftalmología", "Cg. Vascular", 
-            "Neurocirugía", "Pediatría", "Cg. Plástica", "Otros"
-        ])
-        asa = st.selectbox("📊 Estado Físico (ASA)", ["ASA I", "ASA II", "ASA III", "ASA IV", "ASA V"])
-
-    procedimiento = st.text_input("⚔️ Procedimiento Específico", placeholder="Ej: Apendicectomía laparoscópica, By-pass")
-    
-    st.markdown("<h3 style='color: #6ee7b7; font-size: 1.3rem; margin-top: 1rem;'>💉 Técnica Anestésica</h3>", unsafe_allow_html=True)
-    
-    tipo_anestesia = st.multiselect("Selecciona las técnicas aplicadas:", [
-        "General - TET (Intubación)", "General - ML (Mascarilla)", "TIVA", 
-        "Epidural", "Intradural / Espinal", "Bloqueo Mascarilla / Sedación", 
-        "Bloqueo Periférico (Plexo)", "Local + Sedación", "Combinada"
-    ])
-    
-    # Campo expandible
-    with st.expander("➕ Añadir observaciones clínicas o incidencias"):
-        notas = st.text_area("Notas / Vía aérea:", placeholder="Ej: Intubación al primer intento. Vía venosa central canalizada sin incidencias...")
-    
-    boton_guardar = st.form_submit_button("✅ REGISTRAR CASO CLÍNICO")
-
-# Lógica de procesamiento de datos
-if boton_guardar:
-    if not procedimiento:
-        st.error("⚠️ Operación rechazada: Especifica el nombre del procedimiento quirúrgico.")
-    else:
-        if hoja_datos is not None:
-            try:
-                nueva_fila = [
-                    fecha_cirugia.strftime("%Y-%m-%d"),
-                    quirofano,
-                    especialidad,
-                    procedimiento,
-                    ", ".join(tipo_anestesia),
-                    asa,
-                    notas if 'notas' in locals() else ""
-                ]
-                hoja_datos.append_row(nueva_fila)
-                st.balloons()
-                st.success("✨ Registro procesado y guardado en Google Sheets.")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Error al guardar los datos: {e}")
-
-st.write("")
-
-# --- VISUALIZACIÓN DE HISTORIAL ---
-st.markdown("<h3 style='color: #ecfdf5; font-size: 1.4rem;'>📊 Últimos Casos Registrados</h3>", unsafe_allow_html=True)
-
-if hoja_datos is not None:
-    try:
-        datos = hoja_datos.get_all_records()
-        if datos:
-            df = pd.DataFrame(datos)
-            df_invertido = df.iloc[::-1]
-            st.dataframe(df_invertido.head(5), width="stretch")
-        else:
-            st.info("No hay casos registrados en esta hoja todavía.")
-    except Exception as e:
-        st.caption(f"Fallo al cargar la vista previa: {e}")
+st.markdown("<p style='color: #34d399; font-weight: 700; text-transform:
