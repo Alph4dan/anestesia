@@ -73,7 +73,7 @@ if boton_guardar:
             "Procedimiento": procedimiento,
             "Tipo Anestesia": ", ".join(tipo_anestesia),
             "ASA": asa,
-            "Notas/Complicaciones": notes
+            "Notas/Complicaciones": notas
         }
         guardar_registro(nuevo_registro)
         st.success("✅ Cirugía registrada correctamente.")
