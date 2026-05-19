@@ -3,64 +3,93 @@ import pandas as pd
 from datetime import datetime
 import gspread
 
-# Configuración avanzada de la página (Modo Clínico)
+# Configuración de la página (Modo Quirófano Verde)
 st.set_page_config(
-    page_title="AnesthesiaLog | Vanguard", 
-    page_icon="⚡", 
+    page_title="AnesthesiaLog | Green Edition", 
+    page_icon="🌿", 
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# --- ESTILOS VISUALES AVANZADOS (CSS INYECTADO) ---
+# --- ESTILOS VISUALES AVANZADOS (TONOS VERDES Y CAMPOS MEJORADOS) ---
 st.markdown("""
     <style>
-    /* Fondo y tipografía general */
+    /* Fondo general oscuro verde (Verde Quirófano Profundo) */
     .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
+        background-color: #022c22;
+        color: #ecfdf5;
     }
-    /* Tarjetas y contenedores */
+    
+    /* Contenedor del Formulario */
     div[data-testid="stForm"] {
-        background-color: #1e293b !important;
-        border: 1px solid #334155 !important;
-        border-radius: 16px !important;
-        padding: 2rem !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        background-color: #064e3b !important;
+        border: 1px solid #047857 !important;
+        border-radius: 20px !important;
+        padding: 2.5rem !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
     }
-    /* Títulos y textos */
-    h1 {
+    
+    /* Títulos con gradiente esmeralda */
+    h1, h2, h3 {
         font-family: 'Inter', sans-serif;
-        font-weight: 800 !important;
-        background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%);
+        background: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        letter-spacing: -0.05em;
+        font-weight: 800 !important;
     }
-    /* Inputs y Selectores */
-    .stTextInput input, .stSelectbox div, .stTextArea textarea {
-        background-color: #0f172a !important;
-        color: #f8fafc !important;
-        border: 1px solid #475569 !important;
-        border-radius: 8px !important;
-    }
-    /* Enfoque de inputs */
-    .stTextInput input:focus {
-        border-color: #38bdf8 !important;
-    }
-    /* Botón Principal */
-    button[kind="formSubmit"] {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-        color: white !important;
+    
+    /* Color de las etiquetas (Labels) de los campos */
+    label, p {
+        color: #a7f3d0 !important;
         font-weight: 600 !important;
+        letter-spacing: 0.5px;
+    }
+
+    /* === DISEÑO MEJORADO DE LOS CAMPOS DE TEXTO === */
+    .stTextInput input, .stTextArea textarea, div[data-baseweb="select"] > div {
+        background-color: #065f46 !important; /* Fondo verde translúcido */
+        color: #ffffff !important;
+        border: 2px solid #059669 !important; /* Borde verde medio */
+        border-radius: 12px !important; /* Bordes redondeados modernos */
+        padding: 0.6rem 1rem !important; /* Más espacio interior para respirar */
+        transition: all 0.3s ease !important; /* Animación suave */
+        font-size: 1rem !important;
+    }
+    
+    /* Efecto al seleccionar/escribir en un campo (Glow verde claro) */
+    .stTextInput input:focus, .stTextArea textarea:focus, div[data-baseweb="select"] > div:focus-within {
+        border-color: #34d399 !important;
+        box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25) !important;
+        background-color: #047857 !important;
+    }
+
+    /* === DISEÑO DEL BOTÓN PRINCIPAL === */
+    button[kind="formSubmit"] {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        letter-spacing: 1px;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 0.5rem 2rem !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
         transition: all 0.3s ease !important;
-        width: 100% !outset;
+        width: 100% !important;
+        margin-top: 1rem !important;
     }
     button[kind="formSubmit"]:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px rgba(16, 185, 129, 0.4) !important;
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+    }
+    
+    /* Diseño del desplegable (Expander) */
+    .streamlit-expanderHeader {
+        background-color: #065f46 !important;
+        border-radius: 10px !important;
+        border: 1px solid #047857 !important;
+        color: #a7f3d0 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -88,11 +117,11 @@ def conectar_google_sheets():
         return None
 
 # --- CABECERA DE LA APP ---
-st.markdown("<p style='color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: -0.5rem;'>Anesthesia Suite</p>", unsafe_allow_html=True)
-st.title("⚡ AnesthesiaLog")
-st.markdown("<p style='color: #94a3b8;'>Registro analítico e inteligente de actividad anestésica en quirófano.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color: #34d399; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: -0.5rem;'>Quirófano Suite</p>", unsafe_allow_html=True)
+st.title("🌿 AnesthesiaLog")
+st.markdown("<p style='color: #6ee7b7;'>Registro clínico seguro y sincronizado en tiempo real.</p>", unsafe_allow_html=True)
 
-# --- PANEL DE CONTROL DIGITAL (Métricas rápidas) ---
+# --- PANEL DE CONTROL DIGITAL (Métricas en tonos verdes) ---
 hoja_datos = conectar_google_sheets()
 total_casos = 0
 
@@ -103,26 +132,27 @@ if hoja_datos is not None:
     except:
         pass
 
-# Dashboard minimalista superior
+# Dashboard minimalista superior adaptado al verde
 m1, m2, m3 = st.columns(3)
 with m1:
-    st.markdown(f"<div style='background-color: #1e293b; padding: 1rem; border-radius: 12px; border-left: 4px solid #38bdf8;'> <span style='color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;'>Casos Históricos</span> <br> <span style='font-size: 1.8rem; font-weight: 700; color: #f8fafc;'>{total_casos}</span></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #6ee7b7; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Casos Totales</span> <br> <span style='font-size: 1.8rem; font-weight: 800; color: #ecfdf5;'>{total_casos}</span></div>", unsafe_allow_html=True)
 with m2:
-    st.markdown(f"<div style='background-color: #1e293b; padding: 1rem; border-radius: 12px; border-left: 4px solid #10b981;'> <span style='color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;'>Estado Servidor</span> <br> <span style='font-size: 1.2rem; font-weight: 700; color: #10b981; line-height: 2.2rem;'>● ONLINE</span></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #10b981; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Estado</span> <br> <span style='font-size: 1.2rem; font-weight: 800; color: #10b981; line-height: 2.2rem;'>● ONLINE</span></div>", unsafe_allow_html=True)
 with m3:
-    st.markdown(f"<div style='background-color: #1e293b; padding: 1rem; border-radius: 12px; border-left: 4px solid #a855f7;'> <span style='color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;'>Sincronización</span> <br> <span style='font-size: 1.2rem; font-weight: 700; color: #a855f7; line-height: 2.2rem;'>Directa (Drive)</span></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='background-color: #064e3b; padding: 1rem; border-radius: 12px; border-left: 4px solid #059669; border-top: 1px solid #047857;'> <span style='color: #a7f3d0; font-size: 0.8rem; text-transform: uppercase; font-weight: 600;'>Conexión</span> <br> <span style='font-size: 1.2rem; font-weight: 800; color: #34d399; line-height: 2.2rem;'>Drive Segura</span></div>", unsafe_allow_html=True)
 
 st.write("")
+st.write("")
 
-# --- FORMULARIO DE ENTRADA VANGUARDISTA ---
+# --- FORMULARIO DE ENTRADA ---
 with st.form("formulario_cirugia", clear_on_submit=True):
     
-    st.markdown("<h3 style='color: #38bdf8; font-size: 1.2rem; margin-top: 0;'>📝 Datos del Procedimiento</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #6ee7b7; font-size: 1.3rem; margin-top: 0;'>📝 Datos del Procedimiento</h3>", unsafe_allow_html=True)
     
     c1, c2 = st.columns(2)
     with c1:
         fecha_cirugia = st.date_input("📅 Fecha de Intervención", datetime.now())
-        quirofano = st.text_input("🏛️ Quirófano / Paritorio / Sala", placeholder="Ej: Q3, Paritorio")
+        quirofano = st.text_input("🏛️ Quirófano / Sala", placeholder="Ej: Q3, Reanimación")
     with c2:
         especialidad = st.selectbox("🩺 Especialidad Quirúrgica", [
             "Cg. General", "Traumatología", "Ginecología/Obstetricia", 
@@ -131,27 +161,26 @@ with st.form("formulario_cirugia", clear_on_submit=True):
         ])
         asa = st.selectbox("📊 Estado Físico (ASA)", ["ASA I", "ASA II", "ASA III", "ASA IV", "ASA V"])
 
-    procedimiento = st.text_input("⚔️ Procedimiento Específico", placeholder="Ej: Prótesis total de cadera, Craneotomía")
+    procedimiento = st.text_input("⚔️ Procedimiento Específico", placeholder="Ej: Apendicectomía laparoscópica, By-pass")
     
-    st.markdown("<h3 style='color: #38bdf8; font-size: 1.2rem; margin-top: 1rem;'>💉 Técnica Anestésica</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #6ee7b7; font-size: 1.3rem; margin-top: 1rem;'>💉 Técnica Anestésica</h3>", unsafe_allow_html=True)
     
-    tipo_anestesia = st.multiselect("Selecciona todas las técnicas aplicadas:", [
-        "General - TET (Intubación)", "General - ML (Mascarilla)", "TIVA (Total Intravenosa)", 
+    tipo_anestesia = st.multiselect("Selecciona las técnicas aplicadas:", [
+        "General - TET (Intubación)", "General - ML (Mascarilla)", "TIVA", 
         "Epidural", "Intradural / Espinal", "Bloqueo Mascarilla / Sedación", 
-        "Bloqueo Periférico (Plexo)", "Local + Sedación Cognitiva", "Combinada"
+        "Bloqueo Periférico (Plexo)", "Local + Sedación", "Combinada"
     ])
     
-    # Campo opcional en formato limpio
-    with st.expander("➕ Añadir observaciones clínicas o incidencias críticas"):
-        notas = st.text_area("Notas Clínicas:", placeholder="Ej: Vía aérea difícil prevista. Videolaringoscopio McMcGrath hoja 3. Estabilidad hemodinámica estable...")
+    # Campo expandible para mantener la limpieza visual
+    with st.expander("➕ Añadir observaciones clínicas o incidencias"):
+        notas = st.text_area("Notas / Vía aérea:", placeholder="Ej: Intubación al primer intento. Vía venosa central canalizada sin incidencias...")
     
-    st.write("")
-    boton_guardar = st.form_submit_button("🚀 ENVIAR REGISTRO A LA NUBE")
+    boton_guardar = st.form_submit_button("✅ REGISTRAR CASO CLÍNICO")
 
 # Lógica de procesamiento de datos
 if boton_guardar:
     if not procedimiento:
-        st.error("⚠️ Operación rechazada: Es obligatorio especificar el nombre del procedimiento quirúrgico.")
+        st.error("⚠️ Operación rechazada: Especifica el nombre del procedimiento quirúrgico.")
     else:
         if hoja_datos is not None:
             try:
@@ -165,26 +194,26 @@ if boton_guardar:
                     notas if 'notas' in locals() else ""
                 ]
                 hoja_datos.append_row(nueva_fila)
-                st.balloons() # Animación futurista de éxito
-                st.success("✨ Registro procesado y encriptado en tu Google Sheets.")
-                st.rerun() # Recarga la app para actualizar el contador de arriba inmediatamente
+                st.balloons()
+                st.success("✨ Registro procesado y guardado en Google Sheets.")
+                st.rerun()
             except Exception as e:
-                st.error(f"Error en la escritura de datos: {e}")
+                st.error(f"Error al guardar los datos: {e}")
 
 st.write("")
 
-# --- VISUALIZACIÓN DE HISTORIAL (Modo Oscuro Elegante) ---
-st.markdown("<h3 style='color: #f8fafc; font-size: 1.4rem;'>📊 Monitor de Actividad Reciente</h3>", unsafe_allow_html=True)
+# --- VISUALIZACIÓN DE HISTORIAL ---
+st.markdown("<h3 style='color: #ecfdf5; font-size: 1.4rem;'>📊 Últimos Casos Registrados</h3>", unsafe_allow_html=True)
 
 if hoja_datos is not None:
     try:
         datos = hoja_datos.get_all_records()
         if datos:
             df = pd.DataFrame(datos)
-            # Invertimos el orden para mostrar la última cirugía arriba del todo
+            # Invertimos el orden para mostrar la última cirugía arriba
             df_invertido = df.iloc[::-1]
             st.dataframe(df_invertido.head(5), width="stretch")
         else:
-            st.info("El monitor clínico no detecta registros previos en esta hoja.")
+            st.info("No hay casos registrados en esta hoja todavía.")
     except Exception as e:
-        st.caption(f"Fallo en la telemetría de visualización: {e}")
+        st.caption(f"Fallo al cargar la vista previa: {e}")
